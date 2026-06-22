@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>생산계획 Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Excel xlsx 파일을 브라우저에서 읽기 위한 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Chart 표시용 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">GitHub + Cloudflare Pages 버전</p>
+        <h1>📊 생산계획 Dashboard</h1>
+        <p class="subtitle">생산계획 엑셀과 Model.Suffix-Tool 매핑 파일을 업로드하면 자동 전처리 · Tool 매핑 · 생산량 분석을 수행합니다.</p>
+      </div>
+      <div class="status-card">
+        <span class="status-label">총 생산량</span>
+        <strong id="totalQty">0</strong>
+      </div>
+    </header>
+
+    <section class="upload-grid">
+      <label class="upload-card">
+        <span class="upload-title">📂 생산계획 엑셀 업로드</span>
+        <span class="upload-desc">Line, Model.Suffix, 날짜 컬럼 포함</span>
+        <input id="planFile" type="file" accept=".xlsx,.xls" />
+      </label>
+      <label class="upload-card">
+        <span class="upload-title">🔧 Model-Suffix Tool 매핑 업로드</span>
+        <span class="upload-desc">Suffix / Tool 포함, 여러 Sheet 지원</span>
+        <input id="toolFile" type="file" accept=".xlsx,.xls" />
+      </label>
+    </section>
+
+    <section id="messageBox" class="message info">
+      생산계획 파일과 Tool 매핑 파일을 모두 업로드하세요.
+    </section>
+
+    <section class="filter-panel">
+      <div>
+        <label for="lineFilter">Line 선택</label>
+        <select id="lineFilter" multiple></select>
+      </div>
+      <div>
+        <label for="toolFilter">Tool 선택</label>
+        <select id="toolFilter" multiple></select>
+      </div>
+      <div class="filter-actions">
+        <button id="resetFilterBtn" type="button">필터 초기화</button>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel full">
+        <div class="panel-header">
+          <h2>📌 생산계획</h2>
+          <button id="downloadPivotBtn" type="button" class="secondary">CSV 다운로드</button>
+        </div>
+        <div class="table-wrap">
+          <table id="pivotTable"></table>
+        </div>
+      </article>
+
+      <article class="panel chart-panel">
+        <h2>📈 라인별 생산량</h2>
+        <canvas id="lineChart"></canvas>
+      </article>
+
+      <article class="panel chart-panel">
+        <h2>📊 전체 생산량</h2>
+        <canvas id="totalChart"></canvas>
+      </article>
+
+      <article class="panel full">
+        <div class="panel-header">
+          <h2>📋 상세 데이터</h2>
+          <button id="downloadDetailBtn" type="button" class="secondary">CSV 다운로드</button>
+        </div>
+        <div class="table-wrap detail-wrap">
+          <table id="detailTable"></table>
+        </div>
+      </article>
+
+      <article class="panel full unmapped-panel">
+        <h2>⚠️ Tool 미매핑 리스트</h2>
+        <div id="unmappedSummary" class="unmapped-summary">업로드 후 확인 가능합니다.</div>
+        <div id="unmappedList" class="chip-list"></div>
+      </article>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
